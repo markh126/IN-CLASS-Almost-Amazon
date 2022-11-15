@@ -1,3 +1,5 @@
+import { getAuthors } from '../api/authorData';
+import { getBooks } from '../api/bookData';
 import logoutButton from '../components/buttons/logoutButton';
 import domBuilder from '../components/shared/domBuilder';
 import navBar from '../components/shared/navBar';
@@ -14,6 +16,8 @@ const startApp = () => {
   navigationEvents(); // ATTACH THE EVENT LISTENERS TO THE NAVBAR
 
   // TODO: Put all books on the DOM on App load
+  getBooks().then((books) => console.warn(books));
+  getAuthors().then((authors) => console.warn(authors));
 };
 
 export default startApp;
