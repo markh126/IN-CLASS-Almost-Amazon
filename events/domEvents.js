@@ -1,9 +1,14 @@
-import { deleteSingleAuthor, getAuthors, getSingleAuthor } from '../api/authorData';
+import {
+  deleteSingleAuthor, getAuthors, getSingleAuthor,
+} from '../api/authorData';
 import { deleteBook, getBooks, getSingleBook } from '../api/bookData';
+import { getAuthorDetails, getBookDetails } from '../api/mergedData';
 import addAuthorForm from '../components/forms/addAuthorForm';
 import addBookForm from '../components/forms/addBookForm';
 import { showAuthors } from '../pages/authors';
 import { showBooks } from '../pages/books';
+import viewBook from '../pages/viewBook';
+import viewAuthor from '../pages/viewAuthor';
 
 const domEvents = () => {
   document.querySelector('#main-container').addEventListener('click', (e) => {
@@ -38,6 +43,15 @@ const domEvents = () => {
     if (e.target.id.includes('view-book-btn')) {
       console.warn('VIEW BOOK', e.target.id);
       console.warn(e.target.id.split('--'));
+
+      const [, firebaseKey] = e.target.id.split('--');
+      getBookDetails(firebaseKey).then(viewBook);
+    }
+
+    if (e.target.id.includes('view-author-btn')) {
+      console.warn('VIEW AUTHOR BOOKS');
+      const [, firebaseKey] = e.target.id.split('--');
+      getAuthorDetails(firebaseKey).then(viewAuthor);
     }
 
     // FIXME: ADD CLICK EVENT FOR DELETING AN AUTHOR
