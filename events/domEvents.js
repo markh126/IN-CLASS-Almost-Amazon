@@ -1,8 +1,8 @@
 import {
-  deleteSingleAuthor, getAuthors, getSingleAuthor,
+  getAuthors, getSingleAuthor,
 } from '../api/authorData';
 import { deleteBook, getBooks, getSingleBook } from '../api/bookData';
-import { getAuthorDetails, getBookDetails } from '../api/mergedData';
+import { deleteAuthorBooksRelationship, getAuthorDetails, getBookDetails } from '../api/mergedData';
 import addAuthorForm from '../components/forms/addAuthorForm';
 import addBookForm from '../components/forms/addBookForm';
 import { showAuthors } from '../pages/authors';
@@ -10,7 +10,7 @@ import { showBooks } from '../pages/books';
 import viewBook from '../pages/viewBook';
 import viewAuthor from '../pages/viewAuthor';
 
-const domEvents = () => {
+const domEvents = (user) => {
   document.querySelector('#main-container').addEventListener('click', (e) => {
     // TODO: CLICK EVENT FOR DELETING A BOOK
     if (e.target.id.includes('delete-book')) {
@@ -20,7 +20,7 @@ const domEvents = () => {
         const [, firebaseKey] = e.target.id.split('--');
 
         deleteBook(firebaseKey).then(() => {
-          getBooks().then(showBooks);
+          getBooks(user.uid).then(showBooks);
           console.warn('DELETED');
         });
       }
@@ -29,7 +29,7 @@ const domEvents = () => {
     // TODO: CLICK EVENT FOR SHOWING FORM FOR ADDING A BOOK
     if (e.target.id.includes('add-book-btn')) {
       console.warn('ADD BOOK');
-      addBookForm();
+      addBookForm({}, user);
     }
 
     // TODO: CLICK EVENT EDITING/UPDATING A BOOK
@@ -37,7 +37,7 @@ const domEvents = () => {
       console.warn('EDIT BOOK', e.target.id);
       // console.warn(e.target.id.split('--'));
       const [, firebaseKey] = e.target.id.split('--');
-      getSingleBook(firebaseKey).then((bookObj) => addBookForm(bookObj));
+      getSingleBook(firebaseKey).then((bookObj) => addBookForm(bookObj, user));
     }
     // TODO: CLICK EVENT FOR VIEW BOOK DETAILS
     if (e.target.id.includes('view-book-btn')) {
@@ -61,8 +61,8 @@ const domEvents = () => {
         console.warn('DELETE AUTHOR', e.target.id);
         const [, firebaseKey] = e.target.id.split('--');
 
-        deleteSingleAuthor(firebaseKey).then(() => {
-          getAuthors().then(showAuthors);
+        deleteAuthorBooksRelationship(firebaseKey).then(() => {
+          getAuthors(user.uid).then(showAuthors);
           console.warn('DELETED');
         });
       }
